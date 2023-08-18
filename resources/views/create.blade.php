@@ -6,9 +6,9 @@
 
     <form action="{{ route('filmes.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <label for="nome">Nome do Filme:</label>
-        <input type="text" name="nome" required>
-        <!-- Outros campos do formulário -->
+       <label for="imagem_capa">Imagem da Capa:</label>
+       <input type="file" name="imagem_capa" id="imagem_capa">
+
 
         <button type="submit">Inserir</button>
     </form>

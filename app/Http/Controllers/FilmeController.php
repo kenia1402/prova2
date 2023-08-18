@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Filme;
 use Illuminate\Http\Request;
-use App\Filme;
 
 class FilmeController extends Controller
 {
     public function store(Request $request)
     {
-        // Valide os dados do formulário
         $validatedData = $request->validate([
             'nome' => 'required|string',
             'sinopse' => 'required|string',
@@ -19,10 +18,8 @@ class FilmeController extends Controller
             'trailer_link' => 'required|string',
         ]);
     
-        // Upload da imagem da capa
         $imagemCapaPath = $request->file('imagem_capa')->store('imagens_capa', 'public');
     
-        // Crie um novo filme
         $filme = new Filme();
         $filme->nome = $validatedData['nome'];
         $filme->sinopse = $validatedData['sinopse'];
@@ -34,19 +31,21 @@ class FilmeController extends Controller
     
         return redirect()->route('filmes.index')->with('success', 'Filme inserido com sucesso!');
     }
+
     public function index()
     {
-         $filmes = Filme::all();
-         return view('filmes.index', compact('filmes'));
+        $filmes = Filme::all();
+        return view('filmes.index', compact('filmes'));
     }
+
     public function edit($id)
     {
         $filme = Filme::findOrFail($id);
         return view('filmes.edit', compact('filme'));
     }
+
     public function update(Request $request, $id)
     {
-    
         $filme = Filme::findOrFail($id);
 
         $validatedData = $request->validate([
@@ -54,11 +53,11 @@ class FilmeController extends Controller
             'sinopse' => 'required|string',
             'ano' => 'required|integer',
             'categoria' => 'required|string',
-            'imagem_capa' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'imagem_capa' => 'sometimes|image|mimes:jpeg,png,jpg,gif', // Permitindo imagem opcional
             'trailer_link' => 'required|string',
-         ]);
+        ]);
 
-         if ($request->hasFile('imagem_capa')) {
+        if ($request->hasFile('imagem_capa')) {
             $imagemCapaPath = $request->file('imagem_capa')->store('imagens_capa', 'public');
             $filme->imagem_capa = $imagemCapaPath;
         }
@@ -72,6 +71,7 @@ class FilmeController extends Controller
 
         return redirect()->route('filmes.index')->with('success', 'Filme atualizado com sucesso!');
     }
+
     public function destroy($id)
     {
         $filme = Filme::findOrFail($id);
@@ -79,5 +79,4 @@ class FilmeController extends Controller
 
         return redirect()->route('filmes.index')->with('success', 'Filme excluído com sucesso!');
     }
-
 }
